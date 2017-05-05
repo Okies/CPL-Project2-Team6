@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title> CPL-6 </title>
+</head>
+<body>
+<p> 물품 목록</p>
+<table border = "10" width="50%">
+    <tr>
+        <th> 태그 </th>
+        <th> 이름 </th>
+        <th> 가격 </th>
+        <th> 수량 </th>
+        <th> 위치 </th>
+        <th> 분류 </th>
+    </tr>
+    <% for(var i = 0; i < rows.length; i++) { %>
+    <tr>
+        <td> <%= rows[i].id %></td>
+        <td> <%= rows[i].name %></td>
+        <td> <%= rows[i].price %></td>
+        <td> <%= rows[i].count %></td>
+        <td> <%= rows[i].place %></td>
+        <td> <%= rows[i].category %></td>
+    </tr>
+    <% } %>
+</table>
+</body>
+</html>

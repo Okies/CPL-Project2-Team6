@@ -10,20 +10,21 @@ var pool = mysql.createPool({
     password: 'computer'
 });
 
-router.get('/', function(req, res) {
+/* GET home page. */
+router.post('/', function(req, res) {
     pool.getConnection(function (err, connection) {
         // Use the connection
         console.log('connected as id ' + connection.threadId);
 
-        connection.query('SELECT * FROM item', function (err, rows) {
+        var values = [req.body.ID, req.body.PW, req.body.Addr, req.body.Phone];
+
+        var sql = "INSERT INTO member (ID, PW, Addr, Phone) VALUES (?)";
+
+        connection.query(sql, [values], function (err, result) {
             if (err) console.error("err : " + err);
-            console.log("rows : " + JSON.stringify(rows));
+            console.log("result : " + JSON.stringify(result));
 
-            var json = new Object();
-            json.result = rows;
-            console.log("result : " + JSON.stringify(json));
-
-            res.json(json);
+            res.json(result);
 
             connection.release();
 

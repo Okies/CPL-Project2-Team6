@@ -2,7 +2,6 @@ var express = require('express');
 var router = express.Router();
 var mysql = require('mysql');
 
-//DB정보 팀장님 서버 정보로 바꾸면 됨
 var pool = mysql.createPool({
     connectionLimit: 5,
     host: 'localhost',
@@ -12,13 +11,13 @@ var pool = mysql.createPool({
 });
 
 /* GET home page. */
-router.get('/', function(req, res, next) {
+router.get('/', function(req, res) {
     pool.getConnection(function (err, connection) {
         // Use the connection
         console.log('connected as id ' + connection.threadId);
 
         var data = req.query;
-        //주소창에 search?colunm=value 하면 where colunm=value에 해당하는 값을 찾음
+
         for(var x in data ) {
             var sql = "SELECT * from item where ";
             sql += x + '=' + data[x];

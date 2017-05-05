@@ -1,31 +1,13 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title><%= title %></title>
+    <title> CPL-6 </title>
   </head>
   <body>
-    <h1><%= title %></h1>
-    <p>Welcome to <%= title %></p>
-
-    <table border = "10" width="50%">
-      <tr>
-        <th> 태그 </th>
-        <th> 이름 </th>
-        <th> 가격 </th>
-        <th> 수량 </th>
-        <th> 위치 </th>
-        <th> 분류 </th>
-      </tr>
-        <% for(var i = 0; i < rows.length; i++) { %>
-      <tr>
-        <td> <%= rows[i].id %></td>
-        <td> <%= rows[i].name %></td>
-        <td> <%= rows[i].price %></td>
-        <td> <%= rows[i].count %></td>
-        <td> <%= rows[i].place %></td>
-        <td> <%= rows[i].category %></td>
-      </tr>
-        <% } %>
-    </table>
+    <p> index page</p>
+    <input type="button" value="로그인" onclick="location.href='/login'">
+    <input type="button" value="회원가입" onclick="location.href='/join'">
+    <input type="button" value="조회" onclick="location.href='/item_list'">
+    <input type="button" value="추가" onclick="location.href='/add'">
   </body>
 </html>

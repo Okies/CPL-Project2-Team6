@@ -2,7 +2,6 @@ var express = require('express');
 var router = express.Router();
 var mysql = require('mysql');
 
-//DB정보 팀장님 서버 정보로 바꾸면 됨
 var pool = mysql.createPool({
     connectionLimit: 5,
     host: 'localhost',
@@ -12,12 +11,11 @@ var pool = mysql.createPool({
 });
 
 /* GET home page. */
-router.post('/', function(req, res, next) {
+router.post('/', function(req, res) {
     pool.getConnection(function (err, connection) {
         // Use the connection
         console.log('connected as id ' + connection.threadId);
 
-        //post로 받은 값을 배열로 넣음
         var values = [req.body.id, req.body.name,req.body.price*1, req.body.count*1, req.body.place, req.body.category];
 
         var sql = "INSERT INTO item (id, name, price, count, place, category) VALUES (?)";

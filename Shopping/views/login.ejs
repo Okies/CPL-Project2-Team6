@@ -5,20 +5,22 @@
 </head>
 <body>
 <form action="/login_service" method="post">
-    <table>
-        <tr>
-            <td>id</td>
-            <td><input type="text" name="id"></td>
-        </tr>
-        <tr>
-            <td>pw</td>
-            <td><input type="text" name="pw"></td>
-        </tr>
-        <tr>
-            <td>submit</td>
-            <td><input id="btn_submit" type="submit" value="submit"></td>
-        </tr>
-    </table>
+    <fieldset style="width:50px">
+        <legend>로그인</legend>
+        <table>
+            <tr>
+                <td>id</td>
+                <td><input type="text" name="id"></td>
+            </tr>
+            <tr>
+                <td>pw</td>
+                <td><input type="text" name="pw"></td>
+            </tr>
+            <tr>
+                <td><input id="btn_login" type="submit" value="로그인"></td>
+            </tr>
+        </table>
+    </fieldset>
 </form>
 </body>
 </html>
