@@ -10,21 +10,17 @@ var pool = mysql.createPool({
     password: '1234'
 });
 
+/* GET home page. */
 router.get('/', function(req, res) {
     pool.getConnection(function (err, connection) {
         // Use the connection
         console.log('connected as id ' + connection.threadId);
 
-        connection.query('SELECT * FROM item', function (err, rows) {
+        connection.query('SELECT * FROM member where level = 1', function (err, result) {
             if (err) console.error("err : " + err);
-            console.log("rows : " + JSON.stringify(rows));
+            console.log("result : " + JSON.stringify(result));
 
-            var json = new Object();
-            json.result = rows;
-            console.log("result : " + JSON.stringify(json));
-
-            res.json(json);
-
+            res.render('member_list', {rows : result});
             connection.release();
 
             // Don't use the connection here, it has been returned to the pool.

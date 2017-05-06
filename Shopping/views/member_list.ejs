@@ -25,8 +25,8 @@
             <div class="collapse navbar-collapse" id="myNavbar">
                 <ul class="nav navbar-nav">
                     <li><a href="admin_list">Admin</a></li>
-                    <li><a href="member_list">Member</a></li>
-                    <li class="active"><a href="item_list">Product</a></li>
+                    <li class="active"><a href="member_list">Member</a></li>
+                    <li><a href="item_list">Product</a></li>
                 </ul>
             </div>
         </div>
@@ -36,7 +36,7 @@
             <div class="col-lg-12">
                 <br>
                 <h1 class="page-header">
-                    Item
+                    Member
                 </h1>
             </div>
         </div>
@@ -45,22 +45,16 @@
         <table class="table table-hover">
             <thead>
             <tr>
-                <th> 태그 </th>
-                <th> 이름 </th>
-                <th> 가격 </th>
-                <th> 수량 </th>
-                <th> 위치 </th>
-                <th> 분류 </th>
+                <th> ID </th>
+                <th> 주소 </th>
+                <th> 전화번호 </th>
             </tr>
             </thead>
             <% for(var i = 0; i < rows.length; i++) { %>
             <tr>
                 <td> <%= rows[i].id %></td>
-                <td> <%= rows[i].name %></td>
-                <td> <%= rows[i].price %></td>
-                <td> <%= rows[i].count %></td>
-                <td> <%= rows[i].place %></td>
-                <td> <%= rows[i].category %></td>
+                <td> <%= rows[i].adrr %></td>
+                <td> <%= rows[i].phone %></td>
             </tr>
             <% } %>
         </table>
