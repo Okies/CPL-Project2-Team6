@@ -1,26 +1,46 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>title</title>
+    <title>Smart Shopping - Login</title>
+    <meta meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <style>
+        body {
+            background: #f8f8f8;
+            padding: 60px 0;
+        }
+
+        #login-form > div {
+            margin: 15px 0;
+        }
+
+    </style>
 </head>
 <body>
-<form action="/login_service" method="post">
-    <fieldset style="width:50px">
-        <legend>로그인</legend>
-        <table>
-            <tr>
-                <td>id</td>
-                <td><input type="text" name="id"></td>
-            </tr>
-            <tr>
-                <td>pw</td>
-                <td><input type="text" name="pw"></td>
-            </tr>
-            <tr>
-                <td><input id="btn_login" type="submit" value="로그인"></td>
-            </tr>
-        </table>
-    </fieldset>
-</form>
+<div class="container">
+    <div class="col-md-6 col-md-offset-3 col-sm-8 col-sm-offset-2">
+        <div class="panel panel-success">
+            <div class="panel-heading">
+                <div class="panel-title">Smart Shopping</div>
+            </div>
+            <div class="panel-body">
+                <form id="login-form" action="/login_service" method="post">
+                    <div>
+                        <input type="text" class="form-control" name="id" placeholder="Username" autofocus>
+                    </div>
+                    <div>
+                        <input type="password" class="form-control" name="pw" placeholder="Password">
+                    </div>
+                    <div>
+                        <button type="submit" class="form-control btn btn-primary" id="btn_login">로그인</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
 </body>
 </html>

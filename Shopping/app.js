@@ -4,12 +4,16 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
+var session = require('express-session');
 
 /* 현재 구현 페이지 자바스크립트 */
 var index = require('./routes/index');
 var item_list = require('./routes/item_list');
 var member_list = require('./routes/member_list');
 var admin_list = require('./routes/admin_list');
+var login = require('./routes/login');
+var login_service = require('./routes/login_service');
+var logout = require('./routes/logout');
 
 /* 안드로이드 데이터 전송 자바스크립트 */
 var items = require('./routes/items');
@@ -19,9 +23,8 @@ var search = require('./routes/search');
 /* Bootstrap Modal로 구현해야하는 부분 */
 var add_item = require('./routes/add_item');
 
+
 /* 아직 미구현(현재 페이지만 뜸) */
-var login = require('./routes/login');
-var login_service = require('./routes/login_service');
 var join = require('./routes/join');
 var join_service = require('./routes/join_service');
 
@@ -38,11 +41,19 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(session({
+    secret: 'secret',
+    resave: false,
+    saveUninitialized: true
+}));
 
 app.use('/', index);
+app.use('/login', login);
 app.use('/item_list', item_list);
 app.use('/member_list', member_list);
 app.use('/admin_list', admin_list);
+app.use('/login_service', login_service);
+app.use('/logout', logout);
 
 app.use('/items', items);
 app.use('/insert', insert);
@@ -50,8 +61,6 @@ app.use('/search', search);
 
 app.use('/add_item', add_item);
 
-app.use('/login', login);
-app.use('/login_service', login_service);
 app.use('/join', join);
 app.use('/join_service', join_service);
 

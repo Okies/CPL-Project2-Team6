@@ -12,20 +12,10 @@ var pool = mysql.createPool({
 
 /* GET home page. */
 router.get('/', function(req, res) {
-    pool.getConnection(function (err, connection) {
-        // Use the connection
-        console.log('connected as id ' + connection.threadId);
-
-        connection.query('SELECT * FROM item', function (err, result) {
-            if (err) console.error("err : " + err);
-            console.log("result : " + JSON.stringify(result));
-
-            res.render('index');
-            connection.release();
-
-            // Don't use the connection here, it has been returned to the pool.
-        });
-    });
+    if(req.session.user_id == null)
+        res.render('login');
+    else
+        res.render('index');
 });
 
 module.exports = router;
