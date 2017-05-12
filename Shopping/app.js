@@ -14,7 +14,6 @@ var admin_list = require('./routes/admin_list');
 var login = require('./routes/login');
 var login_service = require('./routes/login_service');
 var logout = require('./routes/logout');
-var security = require('./routes/security');
 
 /* 안드로이드 데이터 전송 자바스크립트 */
 var items = require('./routes/items');
@@ -55,7 +54,6 @@ app.use('/member_list', member_list);
 app.use('/admin_list', admin_list);
 app.use('/login_service', login_service);
 app.use('/logout', logout);
-app.use('/security', security);
 
 app.use('/items', items);
 app.use('/insert', insert);
