@@ -64,6 +64,7 @@ app.use('/add_item', add_item);
 app.use('/join', join);
 app.use('/join_service', join_service);
 
+
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   var err = new Error('Not Found');

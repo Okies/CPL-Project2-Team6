@@ -15,7 +15,10 @@ router.post('/', function(req, res) {
     pool.getConnection(function (err, connection) {
         // Use the connection
         console.log('connected as id ' + connection.threadId);
-
+        console.log(req.body.ID);
+        console.log(req.body.PW);
+        console.log(req.body.Addr);
+        console.log(req.body.Phone);
         var values = [req.body.ID, req.body.PW, req.body.Addr, req.body.Phone];
 
         var sql = "INSERT INTO member (ID, PW, Addr, Phone) VALUES (?)";
