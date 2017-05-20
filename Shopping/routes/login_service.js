@@ -19,22 +19,27 @@ router.post('/', function(req, res) {
         var values = [req.body.id, req.body.pw];
 
         var sql = "SELECT * from member where ";
-        sql += "id='" + req.body.id + "' and pw='" + req.body.pw + "' + ' and levle=0' ";
+        sql += "id='" + req.body.id + "'";
         console.log(sql);
 
         connection.query(sql, function (err, result) {
             if (err) console.error("err : " + err);
-            console.log("result : " + JSON.stringify(result[0]));
+            console.log("result : " + JSON.stringify(result));
             //JSON.stringify(result)
             //res.json(result);
             connection.release();
-            if(result[0].id == req.body.id)
+
+            if(result[0].id == req.body.id
+                && result[0].pw == req.body.pw
+                && result[0].level == "0")
             {
                 req.session.user_id = req.body.id;
                 res.send('<script>alert("로그인 되었습니다!"); location.href="/"</script>');
             }
-
-
+            else
+            {
+                res.send('<script>alert("아이디나 비밀번호를 확인하세요!"); location.href="/"</script>');
+            }
             // Don't use the connection here, it has been returned to the pool.
         });
     });

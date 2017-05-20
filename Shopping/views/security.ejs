@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <head>
+        <title>Smart Shopping Admin</title>
+        <meta meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+        <style>
+            .badge {
+                padding: 1px 9px 2px;
+                font-size: 12.025px;
+                font-weight: bold;
+                white-space: nowrap;
+                color: #ffffff;
+                background-color: #999999;
+                -webkit-border-radius: 9px;
+                -moz-border-radius: 9px;
+                border-radius: 9px;
+            }
+            .badge:hover {
+                color: #ffffff;
+                text-decoration: none;
+                cursor: pointer;
+            }
+            .badge-error {
+                background-color: #b94a48;
+            }
+            .badge-error:hover {
+                background-color: #953b39;
+            }
+            .badge-warning {
+                background-color: #f89406;
+            }
+            .badge-warning:hover {
+                background-color: #c67605;
+            }
+            .badge-success {
+                background-color: #468847;
+            }
+            .badge-success:hover {
+                background-color: #356635;
+            }
+            .badge-info {
+                background-color: #3a87ad;
+            }
+            .badge-info:hover {
+                background-color: #2d6987;
+            }
+            .badge-inverse {
+                background-color: #333333;
+            }
+            .badge-inverse:hover {
+                background-color: #1a1a1a;
+            }
+        </style>
+    </head>
+</head>
+<body>
+<div>
+    <nav class="navbar navbar-inverse">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="/">Smart Shopping</a>
+            </div>
+            <div class="collapse navbar-collapse" id="myNavbar">
+                <ul class="nav navbar-nav">
+                    <li><a href="admin_list">Admin</a></li>
+                    <li><a href="member_list">Member</a></li>
+                    <li><a href="item_list">Product</a></li>
+                    <li><a href="security">Security
+                            <%if(alarm > 0){%>
+                            <span class="badge badge-error"><%= alarm %></span>
+                            <%}%>
+                        </a>
+                    </li>
+                </ul>
+                <ul class="nav navbar-nav navbar-right">
+                    <li><a href="logout"><span class="glyphicon glyphicon-log-out"></span> Logout</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <script type= "text/javascript">
+        setInterval(function(){
+            $('#myNavbar').load(window.location + '#myNavbar ul');
+        }, 3000);
+    </script>
+</div>
+<div class="body">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-12">
+                <br>
+                <h1 class="page-header">
+                    Cart Security
+                </h1>
+            </div>
+        </div>
+    </div>
+    <div>
+        <table class="table table-hover">
+            <thead>
+            <tr>
+                <th>Cart No.</th>
+                <th>ID</th>
+                <th>State</th>
+            </tr>
+            </thead>
+            <tbody>
+            <% for(var i = 0; i < rows.length; i++) { %>
+            <%  if(rows[i].state == -1){%>
+            <tr>
+                <td><%=rows[i].number%></td>
+                <td><%=rows[i].member%></td>
+                <td>비작동</td>
+            </tr>
+            <%  }%>
+            <%  if(rows[i].state == 0){%>
+            <tr class="success">
+                <td><%=rows[i].number%></td>
+                <td><%=rows[i].member%></td>
+                <td>연결</td>
+            </tr>
+            <%  }%>
+            <%  if(rows[i].state == 1){%>
+            <tr class="danger">
+                <td><%=rows[i].number%></td>
+                <td><%=rows[i].member%></td>
+                <td>연결끊김</td>
+            </tr>
+            <%  }%>
+            <%}%>
+            </tbody>
+        </table>
+    </div>
+</div>
+</body>
+</html>

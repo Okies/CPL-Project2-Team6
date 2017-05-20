@@ -1,3 +1,6 @@
+/**
+ * Created by redge on 2017-05-18.
+ */
 var express = require('express');
 var router = express.Router();
 var mysql = require('mysql');
@@ -11,6 +14,7 @@ var pool = mysql.createPool({
     password: '1234'
 });
 
+
 /* GET home page. */
 router.get('/', function(req, res) {
     if(req.session.user_id == null)
@@ -21,12 +25,12 @@ router.get('/', function(req, res) {
         pool.getConnection(function (err, connection) {
             console.log('connected as id ' + connection.threadId);
 
-            connection.query('SELECT * FROM item', function (err, result) {
+            connection.query('SELECT * FROM cart', function (err, result) {
                 if (err) console.error("err : " + err);
                 console.log("result : " + JSON.stringify(result));
                 row = result;
                 connection.release();
-                res.render('item_list', {alarm: app.c, rows: row});
+                res.render('security', {alarm: app.c, rows: row});
             });
         });
 

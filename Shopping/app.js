@@ -19,16 +19,17 @@ var logout = require('./routes/logout');
 var items = require('./routes/items');
 var insert = require('./routes/insert');
 var search = require('./routes/search');
+var security = require('./routes/security');
 
 /* Bootstrap Modal로 구현해야하는 부분 */
 var add_item = require('./routes/add_item');
 
-
-/* 아직 미구현(현재 페이지만 뜸) */
 var join = require('./routes/join');
 var join_service = require('./routes/join_service');
 
 var app = express();
+
+var c = 1;
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -54,6 +55,7 @@ app.use('/member_list', member_list);
 app.use('/admin_list', admin_list);
 app.use('/login_service', login_service);
 app.use('/logout', logout);
+app.use('/security', security);
 
 app.use('/items', items);
 app.use('/insert', insert);
@@ -63,7 +65,6 @@ app.use('/add_item', add_item);
 
 app.use('/join', join);
 app.use('/join_service', join_service);
-
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

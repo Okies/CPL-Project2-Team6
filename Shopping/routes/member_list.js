@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var mysql = require('mysql');
+var app = require('../app');
 
 var pool = mysql.createPool({
     connectionLimit: 5,
@@ -16,20 +17,29 @@ router.get('/', function(req, res) {
         res.render('login');
     else
     {
+        var row;
         pool.getConnection(function (err, connection) {
-            // Use the connection
             console.log('connected as id ' + connection.threadId);
 
             connection.query('SELECT * FROM member where level = 1', function (err, result) {
                 if (err) console.error("err : " + err);
                 console.log("result : " + JSON.stringify(result));
-
-                res.render('member_list', {rows : result});
+                row = result;
                 connection.release();
-
-                // Don't use the connection here, it has been returned to the pool.
+                res.render('member_list', {alarm: app.c, rows: row});
             });
         });
+
+        setInterval(function () {
+            pool.getConnection(function (err, connection) {
+                connection.query("Select * from cart where state = 1", function (err, result) {
+                    if (err) console.error("err : " + err);
+                    app.c = result.length;
+                    res.emit({alarm: app.c});
+                });
+                connection.release();
+            });
+        }, 3000);
     }
 });
 
