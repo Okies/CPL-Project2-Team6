@@ -27,10 +27,10 @@ router.post('/', function(req, res) {
             if (err) console.error("err : " + err);
             console.log("result : " + JSON.stringify(result));
 
-            res.json(result);
+            //res.json(result);
 
             connection.release();
-
+            res.send('<script>alert("가입 완료!"); location.href="/"</script>');
             // Don't use the connection here, it has been returned to the pool.
         });
     });

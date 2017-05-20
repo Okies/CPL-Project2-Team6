@@ -171,6 +171,64 @@
         </table>
     </div>
 </div>
+<div class="form-group">
+    <button class="btn btn-default btn-block m-t-md" id="myBtn"> 추가</button>
+    <div id="myModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span class="close">&times;</span>
+                <h3>물품 추가</h3>
+            </div>
+            <div class="modal-body">
+                <form action="/add_item" method="post">
+                    <tr>
+                        <td>태그</td>
+                        <input type="text" class="form-control" name="Tag" placeholder="Tag num" autofocus>
+                    </tr>
+                    <tr>
+                        <td>이름</td>
+                        <input type="'text" class="form-control" name="Name" placeholder="ITEM">
+                    </tr>
+                    <tr>
+                        <td>가격</td>
+                        <input type="text" class="form-control" name="Price" placeholder="Price">
+                    </tr>
+                    <tr>
+                        <td>수량</td>
+                        <input type="text" class="form-control" name="Amount" placeholder="Amount">
+                    </tr>
+                    <tr>
+                        <td>위치</td>
+                        <input type="text" class="form-control" name="Position" placeholder="Position">
+                    </tr>
+                    <tr>
+                        <td>분류</td>
+                        <input type="text" class="form-control" name="Category" placeholder="Category">
+                    </tr>
+                    <tr>
+                        <input id="btn_join" type="submit" value="추가">
+                    </tr>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    var modal=document.getElementById('myModal');
+    var btn=document.getElementById('myBtn');
+    var span=document.getElementsByClassName("close")[0];
+    btn.onclick=function(){
+        modal.style.display="block";
+    }
+    span.onclick=function(){
+        modal.style.display="none";
+    }
+    window.onclick=function(event){
+        if(event.target==modal){
+            modal.style.display="none";
+        }
+    }
+</script>
 <div id="snackbar"> <%=alarm%>건의 카트에 문제가 발생했습니다.</div>
 <%if(alarm >0 ){%>
 <script>
@@ -178,6 +236,7 @@
     x.className = "show";
     setTimeout(function(){ x.className = x.className.replace("show", "")}, 5000);
 </script>
+
 <%}%>
 </body>
 </html>
