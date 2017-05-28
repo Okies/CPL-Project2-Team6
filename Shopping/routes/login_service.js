@@ -27,14 +27,25 @@ router.post('/', function(req, res) {
             console.log("result : " + JSON.stringify(result));
             //JSON.stringify(result)
             //res.json(result);
-            connection.release();
 
             if(result[0].id == req.body.id
-                && result[0].pw == req.body.pw
-                && result[0].level == "0")
+                && result[0].pw == req.body.pw)
             {
-                req.session.user_id = req.body.id;
-                res.send('<script>alert("로그인 되었습니다!"); location.href="/"</script>');
+                if(result[0].level == "0")
+                {
+                    req.session.user_id = req.body.id;
+                    connection.release();
+                    res.send('<script>alert("로그인 되었습니다!"); location.href="/"</script>');
+                }
+                else
+                {
+                    var sql = "UPDATE cart SET memeber=" + result[0].id + " state = 0 WHERE number=" + result[0].number;
+                    connection.query(sql, function(err, result){
+                        if(err) console.error("err : " + err);
+                        connection.release();
+                        res.send("OK");
+                    });
+                }
             }
             else
             {

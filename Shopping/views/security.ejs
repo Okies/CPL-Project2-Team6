@@ -91,6 +91,7 @@
     <script type= "text/javascript">
         setInterval(function(){
             $('#myNavbar').load(window.location + '#myNavbar ul');
+            $('#myTable').load(window.location + '#myTable table');
         }, 3000);
     </script>
 </div>
@@ -106,7 +107,7 @@
         </div>
     </div>
     <div>
-        <table class="table table-hover">
+        <table class="table table-hover" id="myTable">
             <thead>
             <tr>
                 <th>Cart No.</th>
