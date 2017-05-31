@@ -21,6 +21,7 @@ var insert = require('./routes/insert');
 var search = require('./routes/search');
 var security = require('./routes/security');
 var cart = require('./routes/cart');
+var pay = require('./routes/pay');
 
 var join = require('./routes/join');
 var join_service = require('./routes/join_service');
@@ -59,6 +60,7 @@ app.use('/items', items);
 app.use('/insert', insert);
 app.use('/search', search);
 app.use('/cart', cart);
+app.use('/pay', pay);
 
 app.use('/join', join);
 app.use('/join_service', join_service);

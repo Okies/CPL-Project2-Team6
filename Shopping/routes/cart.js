@@ -23,7 +23,8 @@ router.get('/', function(req, res){
         connection.query(sql, function(err, result){
             if(err) console.error("err : "  + err);
             connection.release();
-        })
+        });
+        res.send("OK");
     });
 });
 

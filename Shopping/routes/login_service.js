@@ -27,36 +27,41 @@ router.post('/', function(req, res) {
             console.log("result : " + JSON.stringify(result));
             //JSON.stringify(result)
             //res.json(result);
+            console.log("size ::::::::: " + JSON.stringify(req.body).length);
 
-            if(result[0].id == req.body.id
-                && result[0].pw == req.body.pw)
-            {
-                if(result[0].level == "0")
-                {
-                    req.session.user_id = req.body.id;
-                    connection.release();
-                    res.send('<script>alert("로그인 되었습니다!"); location.href="/"</script>');
-                }
-                else
-                {
-                    if(req.body.number) {
-                        res.send("OK");
-                        var sql = "UPDATE cart SET memeber=" + result[0].id + " state = 0 WHERE number=" + result[0].number;
-                        connection.query(sql, function (err, result) {
-                            if (err) console.error("err : " + err);
-                            connection.release();
-                        });
+            try {
+                if (result[0].id == req.body.id && result[0].pw == req.body.pw) {
+                    if (result[0].level == "0") {
+                        req.session.user_id = req.body.id;
+                        connection.release();
+                        res.send('<script>alert("로그인 되었습니다!"); location.href="/"</script>');
                     }
-                    else
-                        res.send('<script>location.href="/"</script>');
+                    else {
+                        if (req.body.number) {
+                            res.send("Login");
+                            var sql = "UPDATE cart SET member=\"" + result[0].id + "\", state = 0 WHERE number=" + req.body.number;
+                            console.log(sql);
+                            connection.query(sql, function (err, result) {
+                                if (err) console.error("err : " + err);
+                                connection.release();
+                            });
+                        }
+                        else
+                            res.send('<script>location.href="/"</script>');
+                    }
                 }
-            }
-            else
-            {
+                else {
+                    if (req.body.number)
+                        res.send("비밀번호를 확인하세요.");
+                    else
+                        res.send('<script>alert("비밀번호를 확인하세요!"); location.href="/"</script>');
+                }
+            } catch (e) {
+                console.log(e);
                 if(req.body.number)
-                    res.send("NO");
+                    res.send("아이디를 찾을 수 없습니다");
                 else
-                    res.send('<script>alert("아이디나 비밀번호를 확인하세요!"); location.href="/"</script>');
+                    res.send('<script>alert("아이디를 찾을 수 없습니다."); location.href="/"</script>');
             }
             // Don't use the connection here, it has been returned to the pool.
         });
