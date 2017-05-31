@@ -17,11 +17,11 @@ router.post('/', function(req, res) {
         console.log('connected as id ' + connection.threadId);
         console.log(req.body.ID);
         console.log(req.body.PW);
-        console.log(req.body.Addr);
-        console.log(req.body.Phone);
-        var values = [req.body.ID, req.body.PW, req.body.Addr, req.body.Phone];
+        //console.log(req.body.Addr);
+        //console.log(req.body.Phone);
+        var values = [req.body.ID, req.body.PW];
 
-        var sql = "INSERT INTO member (ID, PW, Addr, Phone) VALUES (?)";
+        var sql = "INSERT INTO member (ID, PW) VALUES (?)";
 
         connection.query(sql, [values], function (err, result) {
             if (err) console.error("err : " + err);
@@ -30,7 +30,7 @@ router.post('/', function(req, res) {
             //res.json(result);
 
             connection.release();
-            res.send('<script>alert("가입 완료!"); location.href="/"</script>');
+            res.send("OK");
             // Don't use the connection here, it has been returned to the pool.
         });
     });

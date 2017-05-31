@@ -39,17 +39,24 @@ router.post('/', function(req, res) {
                 }
                 else
                 {
-                    var sql = "UPDATE cart SET memeber=" + result[0].id + " state = 0 WHERE number=" + result[0].number;
-                    connection.query(sql, function(err, result){
-                        if(err) console.error("err : " + err);
-                        connection.release();
+                    if(req.body.number) {
                         res.send("OK");
-                    });
+                        var sql = "UPDATE cart SET memeber=" + result[0].id + " state = 0 WHERE number=" + result[0].number;
+                        connection.query(sql, function (err, result) {
+                            if (err) console.error("err : " + err);
+                            connection.release();
+                        });
+                    }
+                    else
+                        res.send('<script>location.href="/"</script>');
                 }
             }
             else
             {
-                res.send('<script>alert("아이디나 비밀번호를 확인하세요!"); location.href="/"</script>');
+                if(req.body.number)
+                    res.send("NO");
+                else
+                    res.send('<script>alert("아이디나 비밀번호를 확인하세요!"); location.href="/"</script>');
             }
             // Don't use the connection here, it has been returned to the pool.
         });
