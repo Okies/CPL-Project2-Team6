@@ -2,6 +2,8 @@ package com.bong.smartcart;
 
 import android.app.ListFragment;
 import android.content.Context;
+import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -16,6 +18,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
@@ -33,6 +36,7 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 
 public class SearchFragment extends Fragment {
 
@@ -45,10 +49,11 @@ public class SearchFragment extends Fragment {
     private static final String TAG_COUNT = "count";
     private static final String TAG_PLACE = "place";
     private static final String TAG_CATEGORY = "category";
+    private static final String TAG_IMAGEID = "imageId";
 
     JSONArray items = null;
 
-    ArrayList<HashMap<String, String>> itemList;
+    ArrayList<HashMap<String, Object>> itemList;
 
     ListView list;
 
@@ -61,9 +66,8 @@ public class SearchFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_search, null) ;
-        final ListViewAdapter adapter = new ListViewAdapter(this.getContext());
         list = (ListView) view.findViewById(R.id.listView_search) ;
-        itemList = new ArrayList<HashMap<String, String>>();
+        itemList = new ArrayList<HashMap<String, Object>>();
         getData("http://27.35.110.82:3000/items");
         //getData("http://222.104.202.90:3000/items");
         //list.setAdapter(adapter) ;
@@ -91,6 +95,17 @@ public class SearchFragment extends Fragment {
                 getData("http://27.35.110.82:3000/search?name='" + text2 + "'");
             }
         });
+        list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView parent, final View view,
+                                    int position, long id) {
+                InfoActivity.infoId = (itemList.get(position).get(TAG_ID)).toString();
+                Intent i = new Intent(getActivity(), InfoActivity.class);
+                startActivity(i);
+                Log.v("asdasdasdasdsad", Integer.toString(position));
+
+            }
+        });
 
         return view;
 
@@ -98,7 +113,7 @@ public class SearchFragment extends Fragment {
 
     protected void showList()
     {
-        itemList = new ArrayList<HashMap<String, String>>();
+        itemList = new ArrayList<HashMap<String, Object>>();
         try
         {
             Log.v("?뚮┝", "Show LIst try");
@@ -115,27 +130,37 @@ public class SearchFragment extends Fragment {
                 String count = c.getString(TAG_COUNT);
                 String place = c.getString(TAG_PLACE);
                 String category = c.getString(TAG_CATEGORY);
-
                 Log.v("?뚮┝", id + " " + name + " " + price + " " + count + " " + place + " " + category);
-
-                HashMap<String, String> item = new HashMap<String, String>();
+                HashMap<String, Object> item = new HashMap<String, Object>();
+                int imageId = getResources().getIdentifier("p"+id, "drawable", "com.bong.smartcart");
 
                 item.put(TAG_ID, id);
                 item.put(TAG_NAME, name);
-                item.put(TAG_PRICE, price);
-                item.put(TAG_COUNT, count);
-                item.put(TAG_PLACE, place);
-                item.put(TAG_CATEGORY, category);
-
+                item.put(TAG_PRICE, price + "원");
+                item.put(TAG_PLACE, category + "/" + place);
+                item.put(TAG_IMAGEID, getResources().getDrawable(imageId));
                 itemList.add(item);
             }
 
             ListAdapter adapter = new SimpleAdapter(
                     this.getContext(), itemList, R.layout.list_item,
-                    new String[]{TAG_ID, TAG_NAME, TAG_PRICE, TAG_COUNT, TAG_PLACE, TAG_CATEGORY},
-                    new int[]{R.id.list_id, R.id.list_name, R.id.list_price, R.id.list_count, R.id.list_place, R.id.list_category}
+                    new String[]{TAG_NAME, TAG_PRICE, TAG_PLACE, TAG_IMAGEID},
+                    new int[]{R.id.list_name, R.id.list_price, R.id.list_place, R.id.list_Image}
             );
             list.setAdapter(adapter);
+            ((SimpleAdapter) adapter).setViewBinder(new SimpleAdapter.ViewBinder() {
+                @Override
+                public boolean setViewValue(View view, Object data, String textRepresentation) {
+                    if(view.getId() == R.id.list_Image) {
+                        ImageView imageView = (ImageView) view;
+                        Drawable drawable = (Drawable) data;
+                        imageView.setImageDrawable(drawable);
+                        return true;
+                    }
+                    return false;
+                }
+            });
+
         } catch (JSONException e)
         {
             e.printStackTrace();

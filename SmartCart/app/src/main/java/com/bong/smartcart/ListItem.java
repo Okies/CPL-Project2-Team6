@@ -16,6 +16,7 @@ public class ListItem implements Serializable{
     private String countStr ;
     private String placeStr ;
     private String categoryStr ;
+    private int incountInt ;
 
     public ListItem() {
         super();
@@ -23,14 +24,19 @@ public class ListItem implements Serializable{
     /*public void setIcon(Drawable icon) {
         iconDrawable = icon ;
     }*/
-    public ListItem(String idStr, String nameStr, String priceStr, String countStr, String placeStr, String categoryStr) {
+    public ListItem(String idStr, String nameStr, String priceStr, String countStr, String placeStr, String categoryStr, Drawable iconDrawable) {
         super();
+        this.iconDrawable = iconDrawable;
         this.idStr = idStr;
         this.nameStr = nameStr;
         this.priceStr = priceStr;
         this.countStr = countStr;
         this.placeStr = placeStr;
         this.categoryStr = categoryStr;
+        this.incountInt = incountInt;
+    }
+    public void setIcon(Drawable icon) {
+        iconDrawable = icon;
     }
     public void setId(String id) {
         idStr = id ;
@@ -50,10 +56,13 @@ public class ListItem implements Serializable{
     public void setCategory(String category) {
         categoryStr = category ;
     }
+    public void setIncount(int incount) {
+        incountInt = incount;
+    }
 
-    /*public Drawable getIcon() {
+    public Drawable getIcon() {
         return this.iconDrawable ;
-    }*/
+    }
     public String getId() {
         return this.idStr ;
     }
@@ -72,5 +81,7 @@ public class ListItem implements Serializable{
     public String getCategory() {
         return this.categoryStr ;
     }
-
+    public int getInCount() {
+        return this.incountInt ;
+    }
 }

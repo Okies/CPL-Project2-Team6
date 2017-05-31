@@ -13,20 +13,23 @@
     <EditText
         android:id="@+id/text_signup_id"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:hint="아이디"/>
     <EditText
         android:id="@+id/text_signup_password"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:hint="비밀번호"/>
     <EditText
         android:id="@+id/text_signup_check"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:hint="비밀번호확인"/>
     <Button
         android:id="@+id/btn_success"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="완료"
+        android:text="회원가입"
         android:onClick="onClickSuccess"/>
 
 </LinearLayout>

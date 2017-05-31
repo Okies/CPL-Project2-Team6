@@ -67,7 +67,7 @@ router.post('/', function(req, res) {
             connection.release();
         });
     });
-    res.send("OK");
+    res.send("결제되었습니다.");
 });
 
 module.exports = router;

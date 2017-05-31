@@ -5,20 +5,31 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.os.SystemClock;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
+import android.widget.TextView;
+import android.widget.Toast;
 
+import com.bong.smartcart.bluetooth.BTPay;
 import com.bong.smartcart.bluetooth.BTService;
 import com.bong.smartcart.bluetooth.ContextUtil;
 import com.bong.smartcart.bluetooth.PreferenceUtil;
@@ -28,43 +39,53 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.UUID;
 
 
 public class PurchaseFragment extends Fragment {
 
     Handler asdasdasd = new Handler();
+    OutputStream mOutputStream = null;
 
     //리스트
     String myJSON;
     ListView list;
     JSONArray items = null;
     public static String addId = "";
-    ArrayList<HashMap<String, String>> itemList;
+    ArrayList<HashMap<String, Object>> itemList;
+    Button btn_pay;
+    TextView text_total;
 
     //블루투스
     private BTService _btService;
+    private BTPay _BTPay;
     private BluetoothAdapter mAdapter;
     private Context _context;
     private BluetoothAdapter mBTAdapter;
-    public static String Adress = "";
-
+    public static String Adress = "20:16:10:10:80:32";
+    public static String PayAdress = "20:16:10:10:93:18";
 
     private static final String TAG_RESULTS = "result";
     private static final String TAG_ID = "id";
     private static final String TAG_NAME = "name";
     private static final String TAG_PRICE = "price";
-    private static final String TAG_COUNT = "count";
+    private static final String TAG_OPRICE = "oprice";
     private static final String TAG_PLACE = "place";
     private static final String TAG_CATEGORY = "category";
     private static final String TAG_INCOUNT = "incount";
+    private static final String TAG_IMAGEID = "imageId";
+    private static final String TAG_BUTTON = "btn";
 
     public Handler handler = new Handler() {
         String str = "";
@@ -94,28 +115,81 @@ public class PurchaseFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_purchase, null) ;
         list = (ListView)view.findViewById(R.id.listView_purchase);
-        itemList = new ArrayList<HashMap<String, String>>();
+        itemList = new ArrayList<HashMap<String, Object>>();
+        btn_pay = (Button)view.findViewById(R.id.btn_pay);
+        text_total = (TextView)view.findViewById(R.id.text_total);
 
         mBTAdapter = BluetoothAdapter.getDefaultAdapter();
         ContextUtil.CONTEXT = getActivity().getApplicationContext();
         _btService = new BTService(getActivity().getApplicationContext(), handler);
 
+        Log.i("Address", Adress);
+        BluetoothDevice device = mBTAdapter.getRemoteDevice(Adress);
+        Log.i("Device asdfasdfasdf::::", device.toString());
+        _btService.connect(device);
 
-        Button btn_search = (Button) view.findViewById(R.id.testbtn);
-        btn_search.setOnClickListener(new View.OnClickListener() {
+        if(LoginActivity.islogin == 1) {
+            btn_pay.setVisibility(View.VISIBLE);
+        }
+        else {
+            btn_pay.setVisibility(View.INVISIBLE);
+        }
+        btn_pay.setOnClickListener(new View.OnClickListener()
+        {
             @Override
             public void onClick(View v) {
-                Log.i("Address", Adress);
-                BluetoothDevice device = mBTAdapter.getRemoteDevice(Adress);
-                Log.i("Device asdfasdfasdf::::", device.toString());
-                _btService.connect(device);
+                Intent serverIntent = new Intent(getActivity(), DeviceListActivity.class);
+                startActivity(serverIntent);
+                BluetoothDevice device = mBTAdapter.getRemoteDevice(PayAdress);
+                _BTPay = new BTPay(device);
+                new AlertDialog.Builder(getActivity())
+                        .setTitle("결제하시겠습니까?")
+                        .setMessage("총금액 : " + Integer.toString(getTotal()) + "원")
+                        .setPositiveButton("결제", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface arg0, int arg1){
+                                _BTPay.sendPay("open");
+                                sendData("http://27.35.110.82:3000/pay");
+                                Intent result = new Intent(getActivity(), MemberActivity.class);
+                                startActivity(result);
+                                SystemClock.sleep(5000);
+                                _BTPay.sendPay("close");
+                            }
+                        })
+                        .setNegativeButton("취소", new DialogInterface.OnClickListener(){
+                            @Override
+                            public void onClick(DialogInterface arg0, int arg1){
+                                _BTPay.sendPay("close");
+                            }
+                        })
+                        .show();
+            }
+        });
+
+        list.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView parent, final View view,
+                                    int position, long id) {
+                itemList.get(position).put(TAG_INCOUNT, Integer.toString(Integer.parseInt((String)itemList.get(position).get(TAG_INCOUNT))-1));
+                itemList.get(position).put(TAG_PRICE, Integer.toString(Integer.parseInt((String)itemList.get(position).get(TAG_OPRICE))
+                        * Integer.parseInt((String) itemList.get(position).get(TAG_INCOUNT))) + "원");
+                if(Integer.parseInt((String)itemList.get(position).get(TAG_INCOUNT)) == 0) {
+                    itemList.remove(itemList.get(position));
+                }
+                Log.v("111111111111111111", "11111111111111111111");
+                //final String item = (String) parent.getItemAtPosition(position);
+                Log.v("purchase.java", Integer.toString(position));
+                showList(0);
+                text_total.setText(Integer.toString(getTotal()) + "원");
+                return false;
             }
         });
 
         return view;
     }
 
-    protected void showList()
+
+    protected void showList(int wtf)
     {
 
         try
@@ -126,35 +200,70 @@ public class PurchaseFragment extends Fragment {
             Log.v("?뚮┝", "Show LIst jason");
             for (int i = 0; i < items.length(); i++)
             {
+
                 Log.v("?뚮┝", "Im in For");
                 JSONObject c = items.getJSONObject(i);
                 String id = c.getString(TAG_ID);
                 String name = c.getString(TAG_NAME);
                 String price = c.getString(TAG_PRICE);
-                String count = c.getString(TAG_COUNT);
+                String oprice = c.getString(TAG_PRICE);
                 String place = c.getString(TAG_PLACE);
                 String category = c.getString(TAG_CATEGORY);
+                int incount = 1;
+                int imageId = getResources().getIdentifier("p"+id, "drawable", "com.bong.smartcart");
 
-                Log.v("?뚮┝", id + " " + name + " " + price + " " + count + " " + place + " " + category);
 
-                HashMap<String, String> item = new HashMap<String, String>();
+                Log.v("?뚮┝", id + " " + name + " " + price + " " + place + " " + category + " " + incount);
+
+                HashMap<String, Object> item = new HashMap<String, Object>();
 
                 item.put(TAG_ID, id);
                 item.put(TAG_NAME, name);
-                item.put(TAG_PRICE, price);
-                item.put(TAG_COUNT, count);
-                item.put(TAG_PLACE, place);
-                item.put(TAG_CATEGORY, category);
+                item.put(TAG_PRICE, price + "원");
+                item.put(TAG_OPRICE, oprice);
+                item.put(TAG_PLACE, category + "/" + place);
+                item.put(TAG_INCOUNT, Integer.toString(incount));
+                item.put(TAG_IMAGEID, getResources().getDrawable(imageId));
 
-                itemList.add(item);
+                int size = itemList.size();
+                int flag = 1;
+                if(wtf == 1) {
+                    for (int n = 0; n < size; n++) {
+                        String s = (String) itemList.get(n).get(TAG_ID);
+                        if (s.equals(id)) {
+                            itemList.get(n).put(TAG_INCOUNT, Integer.toString(Integer.parseInt((String) itemList.get(n).get(TAG_INCOUNT)) + 1));
+                            itemList.get(n).put(TAG_PRICE, Integer.toString(Integer.parseInt((String)itemList.get(n).get(TAG_OPRICE))
+                                    * Integer.parseInt((String) itemList.get(n).get(TAG_INCOUNT))) + "원");
+                            flag = 0;
+                            break;
+                        }
+                    }
+                    if (flag == 1) itemList.add(item);
+                }
             }
 
             ListAdapter adapter = new SimpleAdapter(
-                    this.getContext(), itemList, R.layout.list_item,
-                    new String[]{TAG_ID, TAG_NAME, TAG_PRICE, TAG_COUNT, TAG_PLACE, TAG_CATEGORY},
-                    new int[]{R.id.list_id, R.id.list_name, R.id.list_price, R.id.list_count, R.id.list_place, R.id.list_category}
+                    this.getContext(), itemList, R.layout.list_pitem,
+                    new String[]{TAG_NAME, TAG_PRICE, TAG_PLACE, TAG_INCOUNT, TAG_IMAGEID},
+                    new int[]{R.id.list_name, R.id.list_price, R.id.list_place, R.id.list_incount, R.id.list_Image}
             );
+            ((SimpleAdapter) adapter).setViewBinder(new SimpleAdapter.ViewBinder() {
+                @Override
+                public boolean setViewValue(View view, Object data, String textRepresentation) {
+                    if(view.getId() == R.id.list_Image) {
+                        Log.d("BBBBiiiiiiiiiii", "BVVVVVVVVVVVVV");
+                        ImageView imageView = (ImageView) view;
+                        Drawable drawable = (Drawable) data;
+                        imageView.setImageDrawable(drawable);
+                        return true;
+                    }
+                    return false;
+                }
+            });
+
+
             list.setAdapter(adapter);
+
         } catch (JSONException e)
         {
             e.printStackTrace();
@@ -200,185 +309,111 @@ public class PurchaseFragment extends Fragment {
             protected void onPostExecute(String result)
             {
                 myJSON = result;
-                showList();
+                showList(1);
+                text_total.setText(Integer.toString(getTotal()) + "원");
             }
         }
         GetDataJSON g = new GetDataJSON();
         g.execute(url);
     }
 
-//블루투스 코드
-
-    public void connect(String $address)
-    {
-        BluetoothDevice device = mAdapter.getRemoteDevice($address);
-        connect(device);
-    }
-
-
-    public void connect(BluetoothDevice $device)
-    {
-        ConnectThread thread = new ConnectThread($device);
-        thread.start();
-    }
-
-
-
-    private void manageConnectedSocket(BluetoothSocket $socket)
-    {
-        // Log.i("BTService.java | manageConnectedSocket", "|==" + $socket.getRemoteDevice().getName() + "|" + $socket.getRemoteDevice().getAddress());
-        PreferenceUtil.putLastRequestDeviceAddress($socket.getRemoteDevice().getAddress());
-       // mAdapter.cancelDiscovery();
-        ConnectedThread thread = new ConnectedThread($socket);
-        thread.start();
-    }
-
-    private class ConnectThread extends Thread {
-        private final BluetoothSocket mmSocket;
-
-
-        public ConnectThread(BluetoothDevice device) {
-            // Use a temporary object that is later assigned to mmSocket, because mmSocket is final
-            BluetoothSocket tmp = null;
-//         mmDevice = device;
-            // Get a BluetoothSocket to connect with the given BluetoothDevice
-            try {
-                UUID MY_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
-
-                // MY_UUID is the app's UUID string, also used by the server code
-                tmp = device.createRfcommSocketToServiceRecord(MY_UUID);
-                Log.i("dddddddddddddddddd", tmp.toString());
-            } catch (IOException e) {
+    public int getTotal() {
+        int total = 0;
+        int size = itemList.size();
+            for (int n = 0; n < size; n++) {
+                total += (Integer.parseInt((String) itemList.get(n).get(TAG_OPRICE)) * Integer.parseInt((String) itemList.get(n).get(TAG_INCOUNT)));
             }
-            mmSocket = tmp;
-        }
-
-
-        public void run() {
-            // Cancel discovery because it will slow down the connection
-            //mAdapter.cancelDiscovery();
-            try {
-                // Connect the device through the socket. This will block until it succeeds or throws an exception
-                mmSocket.connect();
-            } catch (Exception e1) {
-                Log.e("Purchase.java | run", "|==" + "connect fail" + "|");
-
-                e1.printStackTrace();
-                // Unable to connect; close the socket and get out
-                try {
-                    if (mmSocket.isConnected())
-                        mmSocket.close();
-                } catch (Exception e2) {
-                    e2.printStackTrace();
-                }
-                return;
-            }
-            // Do work to manage the connection (in a separate thread)
-            manageConnectedSocket(mmSocket);
-        }
-
+        return total;
     }
 
-    private class ConnectedThread extends Thread
+    public void sendData(String url)
     {
-        private final BluetoothSocket mmSocket;
-        private final InputStream mmInStream;
-
-
-//      private final OutputStream mmOutStream;
-
-        public ConnectedThread(BluetoothSocket socket)
+        class sendDataJSON extends AsyncTask<String, Void, String>
         {
-            mmSocket = socket;
-            InputStream tmpIn = null;
-//         OutputStream tmpOut = null;
-            // Get the input and output streams, using temp objects because member streams are final
-            try
+            @Override // URL 연결이 구현될 부분
+            protected String doInBackground(String... params)
             {
-                tmpIn = socket.getInputStream();
-//            tmpOut = socket.getOutputStream();
-            }
-            catch (IOException e)
-            {
-            }
-            mmInStream = tmpIn;
-//         mmOutStream = tmpOut;
-        }
-
-        public void run()
-        {
-            //byte[] buffer = new byte[20]; // buffer store for the stream
-            int bytes; // bytes returned from read()
-            // Keep listening to the InputStream until an exception occurs
-
-            while (true)
-            {
+                String uri = params[0];
+                String response = null;
+                HttpURLConnection conn = null;
                 try
                 {
-                    byte[] buffer = new byte[16]; // buffer store for the stream
-                    // Read from the InputStream
-                    bytes = mmInStream.read(buffer);
-                    sleep(1000);
+                    URL url = new URL(uri);
+                    conn = (HttpURLConnection) url.openConnection();
+                    conn.setReadTimeout(10000 /* milliseconds */);
+                    conn.setConnectTimeout(15000 /* milliseconds */);
+                    conn.setRequestMethod("POST");
+                    conn.setDoInput(true);
 
-                    // Send the obtained bytes to the UI Activity
-//               mHandler.obtainMessage(MESSAGE_READ, bytes, -1, buffer).sendToTarget();
-                    Log.i("Purchase.java | run", "|==" + bytes2String(buffer, bytes) + "|");
+                    OutputStream os = conn.getOutputStream();
+                    BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
 
-                    String name = bytes2String(buffer, bytes);
-                    Log.i("name", name);
-                    //list.setText(name);
+                    JSONObject obj = new JSONObject();
+                    JSONArray ids = new JSONArray();
+                    try {
+                        for (int i = 0; i < itemList.size(); i++) {
+                            JSONObject item = new JSONObject();
+                            item.put("id", itemList.get(i).get(TAG_ID));
+                            item.put("name", itemList.get(i).get(TAG_NAME));
+                            item.put("count", itemList.get(i).get(TAG_INCOUNT));
+                            ids.put(item);
+                        }
+                        obj.put("items", ids);
+                        obj.put("userID", LoginActivity.logined_id);
 
-                    /*Intent intent = new Intent("kr.mint.bluetooth.receive");
-                    intent.putExtra("signal", bytes2String(buffer, bytes));
-                    _context.sendBroadcast(intent);*/
-                }
-                catch (Exception e)
-                {
+                        Log.i("LLLLLLLLLLL:::::::", obj.toString());
+                    }
+                    catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+                    bw.write(obj.toString());
+                    bw.flush();
+                    bw.close();
+                    os.close();
+
+                    conn.connect();
+
+                    BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream(), "UTF-8")); //캐릭터셋 설정
+
+                    StringBuilder sb = new StringBuilder();
+                    String line = null;
+                    while ((line = br.readLine()) != null) {
+                        if(sb.length() > 0) {
+                            sb.append("\n");
+                        }
+                        sb.append(line);
+                    }
+                    String req = sb.toString();
+
+                    //if(req.equals("OK"))
+                    //    islogin = 1;
+
+                    return req;
+                } catch (IOException e) {
                     e.printStackTrace();
-                    break;
+                } finally {
+                    if(conn != null)
+                        conn.disconnect();
                 }
+                return response;
+            }
+
+            @Override // UI 업데이트가 구현될 부분
+            protected void onPostExecute(String result)
+            {
+                Toast.makeText(getActivity(), result, Toast.LENGTH_SHORT).show();
             }
         }
-
-
-        private String bytes2String(byte[] b, int count)
-        {
-            ArrayList<String> result = new ArrayList<String>();
-            /*for (int i = 0; i < count; i++)
-            {
-                String myInt = b.toString();
-                result.add(" " + myInt);
-            }*/
-//016008130124061
-            String str = new String(b);
-            return str;
-            //return TextUtils.join("-", result);
-        }
-
-
-      /* Call this from the main Activity to send data to the remote device */
-//      public void write(byte[] bytes)
-//      {
-//         try
-//         {
-//            mmOutStream.write(bytes);
-//         }
-//         catch (IOException e)
-//         {
-//         }
-//      }
-
-        /* Call this from the main Activity to shutdown the connection */
-        public void cancel()
-        {
-            try
-            {
-                mmSocket.close();
-            }
-            catch (IOException e)
-            {
-            }
-        }
+        sendDataJSON g = new sendDataJSON();
+        g.execute(url);
     }
 
+    void sendPay(String msg) {
+        try{
+            mOutputStream.write(msg.getBytes());  // 문자열 전송.
+        }catch(Exception e) {  // 문자열 전송 도중 오류가 발생한 경우
+
+        }
+    }
 }
