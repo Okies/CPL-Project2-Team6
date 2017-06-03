@@ -49,7 +49,7 @@ public class BTService extends Service
     }
 
 
-  public void connect(BluetoothDevice $device)
+    public void connect(BluetoothDevice $device)
     {
         ConnectThread thread = new ConnectThread($device);
         thread.start();
@@ -58,7 +58,7 @@ public class BTService extends Service
 
     private void manageConnectedSocket(BluetoothSocket $socket)
     {
-       // Log.i("BTService.java | manageConnectedSocket", "|==" + $socket.getRemoteDevice().getName() + "|" + $socket.getRemoteDevice().getAddress());
+        // Log.i("BTService.java | manageConnectedSocket", "|==" + $socket.getRemoteDevice().getName() + "|" + $socket.getRemoteDevice().getAddress());
         PreferenceUtil.putLastRequestDeviceAddress($socket.getRemoteDevice().getAddress());
         mAdapter.cancelDiscovery();
         ConnectedThread thread = new ConnectedThread($socket, handler);

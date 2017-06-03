@@ -16,25 +16,25 @@ public class ConnectionReceiver extends BroadcastReceiver
    public void onReceive(Context $context, Intent $intent)
    {
       ContextUtil.CONTEXT = $context;
-      
+
       //Log.i("ConnectionReceiver.java | onReceive", "|===========" + $intent.getAction() + "|");
-      
+
       String action = $intent.getAction();
-      
+
       if (Intent.ACTION_BOOT_COMPLETED.equals(action))
       {
 //         reconnect($context, PreferenceUtil.lastConnectedDeviceAddress());
-        // Log.i("ConnectionReceiver.java | onReceive", "|==" + "연결 시도 중" + "|");
+         // Log.i("ConnectionReceiver.java | onReceive", "|==" + "연결 시도 중" + "|");
          BTService btService = new BTService($context, handler);
          btService.connect(PreferenceUtil.lastConnectedDeviceAddress());
          return;
       }
-      
+
       BluetoothDevice device = $intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
       String address = device.getAddress();
       if (TextUtils.isEmpty(address))
          return;
-      
+
       if (BluetoothDevice.ACTION_ACL_DISCONNECTED.equals(action))
       {
          reconnect($context, address);
@@ -44,7 +44,7 @@ public class ConnectionReceiver extends BroadcastReceiver
          String lastRequestAddress = PreferenceUtil.lastRequestDeviceAddress();
          if (TextUtils.isEmpty(lastRequestAddress))
             return;
-         
+
          if (address.equals(lastRequestAddress))
          {
             PreferenceUtil.putLastConnectedDeviceAddress(lastRequestAddress);
@@ -60,19 +60,19 @@ public class ConnectionReceiver extends BroadcastReceiver
          }
       }
    }
-   
-   
+
+
    private void reconnect(Context $context, String $address)
    {
       String lastConnectAddress = PreferenceUtil.lastConnectedDeviceAddress();
-     // Log.i("ConnectionReceiver.java | onReceive", "|==연결 시도할 주소 : " + lastConnectAddress + "|");
+      // Log.i("ConnectionReceiver.java | onReceive", "|==연결 시도할 주소 : " + lastConnectAddress + "|");
       if (TextUtils.isEmpty(lastConnectAddress))
          return;
-      
+
       // 연결이 끊기면 1분 마다 스캔을 다시 한다.
       if ($address.equals(lastConnectAddress))
       {
-        // Log.i("DisconnectedReceiver.java | onReceive", "|==" + "스캔 다시하기" + "|");
+         // Log.i("DisconnectedReceiver.java | onReceive", "|==" + "스캔 다시하기" + "|");
          //ReConnectService.instance($context).autoReconnect();
       }
    }

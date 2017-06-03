@@ -5,7 +5,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 
+
 public class MemberActivity extends AppCompatActivity {
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -19,6 +21,7 @@ public class MemberActivity extends AppCompatActivity {
     }
 
     public void onClickNonmember (View v) {
+        LoginActivity.islogin = 0;
         Intent i = new Intent(MemberActivity.this, MainActivity.class);
         startActivity(i);
     }

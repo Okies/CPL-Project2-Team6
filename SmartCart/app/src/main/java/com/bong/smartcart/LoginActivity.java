@@ -23,7 +23,8 @@ public class LoginActivity extends AppCompatActivity {
     EditText text_password;
     String id;
     String pw;
-    int islogin = 0;
+    public static int islogin = 0;
+    public static String logined_id = "";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -33,7 +34,7 @@ public class LoginActivity extends AppCompatActivity {
     public void onClickLogin (View v) {
         sendData("http://27.35.110.82:3000/login_service");
         //sendData("http://222.104.202.90:3000/login_service");
-}
+    }
 
     public void onClickSignup (View v) {
         Intent i = new Intent(LoginActivity.this, SignupActivity.class);
@@ -85,8 +86,10 @@ public class LoginActivity extends AppCompatActivity {
                         sb.append(line);
                     }
                     String req = sb.toString();
-                    if(req.equals("OK"))
+                    if(req.equals("Login")) {
                         islogin = 1;
+                        logined_id = id;
+                    }
                     System.out.println("response:" + req);
                     return req;
                 } catch (IOException e) {

@@ -2,53 +2,57 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:layout_width="fill_parent"
               android:layout_height="wrap_content"
-              android:orientation="vertical"
+              android:orientation="horizontal"
               android:padding="10dp"
               android:paddingLeft="10dp"
               android:paddingRight="10dp" >
 
-    <TextView
-        android:id="@+id/list_id"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:paddingBottom="2dip"
-        android:paddingTop="6dip"
-        android:textStyle="bold" />
+    <ImageView
+        android:id="@+id/list_Image"
+        android:layout_width="80dp"
+        android:layout_height="80dp" />
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="80dp">
+
+        <TextView
+            android:id="@+id/list_name"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="3"
+            android:layout_gravity="center_vertical"
+            android:textAlignment="center"
+            android:textStyle="bold"
+            android:textSize="30dp"/>
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="2"
+            android:layout_gravity="bottom">
+
+            <TextView
+                android:id="@+id/list_place"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right"
+                android:textColor="#ab9f9f"/>
+            <TextView
+                android:id="@+id/list_price"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:textSize="20dp"
+                android:textColor="#f7960f"
+                android:layout_gravity="right"
+                android:layout_marginTop="30dp"/>
+
+        </LinearLayout>
 
 
-    <TextView
-        android:id="@+id/list_name"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:paddingBottom="2dip"
-        android:textStyle="bold"/>
 
-    <TextView
-        android:id="@+id/list_price"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:gravity="left"
-        android:textStyle="bold" />
-
-    <TextView
-        android:id="@+id/list_count"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:gravity="left"
-        android:textStyle="bold" />
-
-    <TextView
-        android:id="@+id/list_place"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:gravity="left"
-        android:textStyle="bold" />
-
-    <TextView
-        android:id="@+id/list_category"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:gravity="left"
-        android:textStyle="bold" />
+    </LinearLayout>
 
 </LinearLayout>

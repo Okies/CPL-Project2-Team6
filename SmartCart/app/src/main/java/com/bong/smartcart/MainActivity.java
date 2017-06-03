@@ -27,21 +27,24 @@ import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 
 public class MainActivity extends AppCompatActivity {
-
-
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
      * fragments for each of the sections. We use a
@@ -65,8 +68,8 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        Intent serverIntent = new Intent(this, DeviceListActivity.class);
-        startActivity(serverIntent);
+        /*Intent serverIntent = new Intent(this, DeviceListActivity.class);
+        startActivity(serverIntent);*/
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
@@ -94,7 +97,13 @@ public class MainActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.disconn) {
+            sendData("http://27.35.110.82:3000/cart?state=1&number=1");
+
+            return true;
+        }
+        if (id == R.id.conn) {
+            sendData("http://27.35.110.82:3000/cart?state=-1&number=1");
             return true;
         }
 
@@ -182,6 +191,47 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    public void sendData(String url)
+    {
+        class GetDataJSON extends AsyncTask<String, Void, String>
+        {
 
+            @Override
+            protected String doInBackground(String... params)
+            {
+
+                String uri = params[0];
+
+                BufferedReader bufferedReader = null;
+                try
+                {
+                    URL url = new URL(uri);
+                    HttpURLConnection con = (HttpURLConnection) url.openConnection();
+                    StringBuilder sb = new StringBuilder();
+
+                    bufferedReader = new BufferedReader(new InputStreamReader(con.getInputStream()));
+
+                    String json;
+                    while ((json = bufferedReader.readLine()) != null)
+                    {
+                        sb.append(json + "\n");
+                    }
+
+                    return sb.toString().trim();
+
+                } catch (Exception e)
+                {
+                    return null;
+                }
+            }
+
+            @Override
+            protected void onPostExecute(String result)
+            {
+            }
+        }
+        GetDataJSON g = new GetDataJSON();
+        g.execute(url);
+    }
 
 }
